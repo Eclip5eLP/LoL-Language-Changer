@@ -26,9 +26,10 @@ echo 5. Spanish
 echo 6. Italian
 echo 7. French
 echo 8. Russian
+echo C. Custom
 set /p c=Please choose your desired language: 
 
-set locale=en_GB
+set locale=NONE
 if %c% equ 1 set locale=en_GB
 if %c% equ 2 set locale=ja_JP
 if %c% equ 3 set locale=ko_KR
@@ -37,7 +38,10 @@ if %c% equ 5 set locale=es_ES
 if %c% equ 6 set locale=it_IT
 if %c% equ 7 set locale=fr_FR
 if %c% equ 8 set locale=ru_RU
+if %c% equ C goto customLang
+if "%locale%" equ "NONE" goto menu
 
+:setLocale
 set langShort=%locale:~3,2%
 set shortName="%userprofile%\Desktop\League of Legends %langShort%.lnk"
 powershell "$s=(New-Object -COM WScript.Shell).CreateShortcut('%shortName%');$s.TargetPath='%lolExe%';$s.Arguments='--locale=%locale%';$s.Save()"
@@ -68,6 +72,17 @@ call :log "League path set to '%c%'"
 start "" %0
 exit
 
+:customLang
+echo.
+echo Make sure you know how to set the language properties.
+echo.
+set /p locale=Enter Language Code: 
+call :strLen locale strlen
+if %strlen% equ 5 goto setLocale
+echo Invalid Language Code!
+pause > nul
+goto menu
+
 :setup_default
 cd "%dataDir%"
 (
@@ -78,6 +93,13 @@ cd "%appDir%"
 call :log "League path set to '%riotDefault%'"
 start "" %0
 exit
+
+:strLen
+setlocal enabledelayedexpansion
+:strLen_Loop
+   if not "!%1:~%len%!"=="" set /A len+=1 & goto :strLen_Loop
+(endlocal & set %2=%len%)
+goto eof
 
 :log
 set lastDir=%cd%
