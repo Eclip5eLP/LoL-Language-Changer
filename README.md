@@ -19,3 +19,4 @@ Made By
 
 `English`
 Easily change the Language of your League of Legends client as often and whenever you want.
+Fully Open Source, written in Batch. Compiled to an exe too.
